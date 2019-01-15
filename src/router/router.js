@@ -5,6 +5,8 @@ import article from '../pages/article.vue'
 import edit from '../pages/edit.vue'
 import classify from '../pages/classify.vue'
 import aboutme from '../pages/aboutme.vue'
+import login from '../pages/user/login.vue'
+import regist from '../pages/user/regist.vue'
 
 import indexpage from '../pages/indexapge/indexpage.vue';
 
@@ -17,6 +19,17 @@ export default new Router({
       name: 'indexpage',
       redirect: 'indexpage',
     },
+    {
+      path: '/login',
+      name: 'login',
+      component:login
+    },
+    {
+      path: '/regist',
+      name: 'regist',
+      component:regist
+    },
+
     {
       path: '/article',
       name: 'article',
