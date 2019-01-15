@@ -4,13 +4,18 @@
 
       <el-form :model="formInline" ref="formInline" label-width="100px" class="demo-ruleForm">
 
-          <el-input type="text" v-model.number="formInline.username" autocomplete="off"></el-input>
-          <el-input type="password" v-model.number="formInline.password" autocomplete="off"></el-input>
+          <el-input type="text" v-model.number="formInline.username" autocomplete="off" placeholder="请输入账号">
+            <template slot="prepend"><icon class="el-icon-info"></icon></template>
+          </el-input>
+          <el-input type="password" v-model.number="formInline.password" autocomplete="off"  placeholder="请输入密码">
+            <template slot="prepend"><icon class="el-icon-info"></icon></template>
+          </el-input>
 
-        <el-form-item>
-          <el-button type="primary" @click="handleSubmit('formInline')">提交</el-button>
-          <el-button @click="handleRegist('formInline')">重置</el-button>
-        </el-form-item>
+        <div class="login-box-line">
+          <el-button type="primary" @click="handleSubmit('formInline')">登录</el-button>
+          <el-button @click="handleRegist('formInline')">注册</el-button>
+        </div>
+
       </el-form>
 
     </article>
@@ -88,23 +93,38 @@
 </script>
 <style scoped lang="less">
   .login {
-    display: flex;
-    justify-content: center;
+    position: fixed;
+    left:0;
+    top:0;
     width: 100%;
-    height: 100vh;
-    border: 1px solid #f00;
-  }
+    height: 100%;
+    background: #c6c7a7;
 
-  .login-box {
-    width: 520px;
-    height: 420px;
-  }
+    .login-box{
+      width: 600px;
+      top: 35%;
+      left: 50%;
+      position: absolute;
+      margin-left: -300px;
+      text-align: center;
 
-  .login-logo {
-    height: 240px;
-    margin-bottom: 32px;
-    & img {
-      width: 100%;
+      .el-input{
+        width:300px;
+        margin: 10px auto;
+      }
+
+      .login-box-line{
+        margin-top: 20px;
+        button{
+          width: 130px;
+        }
+      }
+
     }
+
+
+
   }
+
+
 </style>
