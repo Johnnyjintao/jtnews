@@ -9,8 +9,8 @@ export const user = {
     return Vue.http.post(API_ROOT + 'user/login',data)
   },
 
-  getuserinfo(data){
-    return Vue.http.post(API_ROOT + 'dispatch/get_user_info',data)
+  regist(data){
+    return Vue.http.post(API_ROOT + 'user/regist',data)
   },
 
   queryvotelist(data){

@@ -8,12 +8,12 @@
       @open="handleOpen"
       @close="handleClose">
 
-      <el-menu-item index="indexpage">
+      <el-menu-item index="home/indexpage">
         <i class="el-icon-menu"></i>
         <span slot="title">主页</span>
       </el-menu-item>
 
-      <el-menu-item index="edit">
+      <el-menu-item index="home/edit">
         <i class="el-icon-edit-outline"></i>
         <span slot="title">发布</span>
       </el-menu-item>
@@ -25,12 +25,12 @@
           <span>管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="article">文章管理</el-menu-item>
-          <el-menu-item index="classify">分类管理</el-menu-item>
+          <el-menu-item index="home/article">文章管理</el-menu-item>
+          <el-menu-item index="home/classify">分类管理</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
 
-      <el-menu-item index="aboutme">
+      <el-menu-item index="home/aboutme">
         <i class="el-icon-setting"></i>
         <span slot="title">关于我</span>
       </el-menu-item>
