@@ -20,14 +20,15 @@
 </template>
 
 <script>
-//  import { mapState, mapMutations } from 'vuex'
+
+  //  import { mapState, mapMutations } from 'vuex'
 
   export default {
     data(){
       return{
 
         user:{
-          nickname:'李锦涛',
+          nickname:window.sessionStorage.getItem('username'),
           headimgurl:'http://wx.qlogo.cn/mmopen/vi_32/kAPpoX9tk40ZdeV9lyaJ9FjicsHJamL6MRsNicObcr1ejXkh00qtoG56NIiaWjLia5wdXHqDeQiaf2rcw5efCiaatPtA/132'
         }
       }
@@ -37,7 +38,8 @@
     computed: {
 //      ...mapState([
 //        'user'
-//      ])
+//      ]),
+
     },
     methods: {
 //      ...mapMutations([
@@ -45,11 +47,28 @@
 //        'remove_token'
 //      ]),
       handleCommand(command) {
+
         if (command === 'exit') {
-          this.remove_token()
-          this.$router.push('/login')
+          this.$confirm('此操作将退出登录, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+            center: true
+          }).then(() => {
+            this.remove_token()
+            this.$router.push('/login')
+          }).catch(() => {
+          });
+
         }
+      },
+
+      remove_token:()=>{
+        window.sessionStorage.removeItem('token');
       }
+    },
+    mounted:function(){
+      window.sessionStorage.getItem('username')
     }
 
   }
@@ -61,7 +80,7 @@
   #header {
     position: relative;
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, .12);
-    border-top: 4px solid appColor;
+
     height: 76px;
     background: #fff;
     min-width: 1138px;

@@ -73,7 +73,6 @@ const router =  new Router({
 //注册全局钩子用来拦截导航
 router.beforeEach((to, from, next) => {
   //获取store里面的token
-  debugger
   let token = store.state.token;
   //判断要去的路由有没有requiresAuth
   if(to.meta.requiresAuth){

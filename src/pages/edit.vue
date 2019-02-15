@@ -16,8 +16,8 @@
       <!-- content -->
       <div class="body">
         <quill-editor v-model.trim="content" ref="myQuillEditor" :options="editorOption">
-          <my-sticky slot="toolbar">
-            <div id="toolbar">
+
+          <div id="toolbar" slot="toolbar">
               <div class="ql-formats">
                 <button class="ql-header" value="1" title="H1标题"></button>
                 <button class="ql-bold" title="加粗"></button>
@@ -37,7 +37,7 @@
               </div>
               <div class="draftSave" :class="{on : isSave}"></div>
             </div>
-          </my-sticky>
+
         </quill-editor>
       </div>
     </div>
@@ -106,14 +106,21 @@
     <!-- 选择封面图 -->
     <select-picture v-if="selectPictureVisible" :json="contentImages"  @complete="inserCover" @close="selectPictureVisible = false"></select-picture>
 
+
+
+
   </div>
 </template>
 <script>
   import Vue from 'vue'
   import VueQuillEditor from 'vue-quill-editor'
   Vue.use(VueQuillEditor)
+
+  import uploadPicture from '@/components/uploadPicture'
+
   export default {
     name: 'publish',
+    components: { uploadPicture },
     data() {
       return {
         json: null,                             // 修改的文章数据
@@ -142,9 +149,132 @@
             }
           },
           placeholder: ' '
-        }
+        },
+
+        imageUrl:''
       }
     },
+
+    computed:{
+      editor() {
+        return this.$refs.myQuillEditor.quill
+      }
+    },
+    methods:{
+      // 插入图片
+      inserPicture(files) {
+        this.editor.focus()
+        files.map((item, index) => {
+          if (item) {
+            this.editor.insertEmbed(this.editor.getSelection().index + index, 'image', 'http://'+item.filename)
+          }
+        })
+        // 设置光标为末尾
+        this.editor.setSelection(this.editor.getSelection().index + 1)
+      },
+
+      // 所有规则
+      allRule() {
+        if (!this.title) {
+          this.$message.error('标题不能为空')
+        } else if (this.title.length < 5) {
+          this.$message.error('标题长度不能低于5个字')
+        } else if (this.title.length > 30) {
+          this.$message.error('标题长度不能超过30个字')
+        } else if (!this.content) {
+          this.$message.error('正文不能为空')
+        } else if (!this.coverImages.length > 0) {
+          this.$message.error('封面图片不能为空')
+        } else if (this.cover_mode === 3 && this.coverImages.length < 3) {
+          this.$message.error('封面图片不能少于3张')
+        } else if (!this.classid) {
+          this.$message.error('标签不能为空')
+        } else {
+          return true
+        }
+      },
+      // 标题规则
+      onlyTitleRule() {
+        if (!this.title) {
+          this.$message.error('标题不能为空')
+        } else if (this.title.length < 5) {
+          this.$message.error('标题长度不能低于5个字')
+        } else if (this.title.length > 30) {
+          this.$message.error('标题长度不能超过30个字')
+        } else {
+          return true
+        }
+      },
+
+
+      verify(btnType) {
+        let type    // 类型
+        let state   // 状态码
+        // 确定编辑 or 新建
+        this.json ? type = 'edit' : type = 'new'
+        // 需要验证的类型
+        if (btnType === 'draft') {
+          state = '2'
+          if (this.onlyTitleRule()) {
+            this.publish(type, state)
+          }
+        }
+        if (btnType === 'publish') {
+          state = '3'
+          if (this.allRule()) {
+            this.$confirm('确定发表文章？', '提示', {
+              type: 'info'
+            }).then(() => {
+              this.publish(type, state)
+            }).catch(err => {
+              console.log(err)
+            })
+          }
+        }
+      },
+      // 发表
+      publish(type, state) {
+        this.loading = true
+        this.title = this.title.replace(/\s/gi, '')
+        let params = {
+          'type': type,
+          'state': state,
+          'title': this.title,
+          'newstext': this.content,
+          'classid': this.classid
+        }
+        if (this.json) {
+          params.id = this.json.id
+        }
+        if (this.coverImages[0]) {
+          params.titlepic = this.coverImages[0]
+        }
+        if (this.cover_mode === 3) {
+          params.titlepic2 = this.coverImages[1]
+          params.titlepic3 = this.coverImages[2]
+        }
+        postArticle(params)
+          .then(res => {
+            console.log(res)
+            if (res && res.data) {
+              this.isChange = false
+              cache.removeLocal('draft')
+              this.$notify.success('操作成功')
+              this.$router.push({name: 'own'})
+            } else {
+              this.$notify.error('出现错误，请重新尝试')
+            }
+            this.loading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.loading = false
+            this.$notify.error('出现错误，请重新尝试')
+          })
+      },
+
+
+    }
 
   }
 </script>

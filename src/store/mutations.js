@@ -19,10 +19,12 @@ const mutations = {
         window.sessionStorage.removeItem('token');
     },
     //这步可有可无，根据自己需求去写
-    [types.USERNAME]: (state, data) => {
+    [types.USERINFO]: (state, data) => {
         //把用户名存起来
-        state.username = data;
-        window.sessionStorage.setItem('username', data);
+
+        state.username = data.data.username;
+        state.userid = data.data.id;
+        window.sessionStorage.setItem('username', data.data.username);
     }
 };
 
