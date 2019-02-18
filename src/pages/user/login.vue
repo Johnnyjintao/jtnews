@@ -169,7 +169,7 @@
     }
     .center-logo{
       text-align: center;
-      margin-top: 85px;
+      margin-top: 125px;
     }
     .login-box{
       margin-top: 50px;
@@ -178,6 +178,11 @@
 
 
       .login-box-line{
+        text-align: center;
+        position: absolute;
+        bottom: 30%;
+        left: 50%;
+        margin-left: -160px;
         button{
           width: 160px;
           height: 60px;
