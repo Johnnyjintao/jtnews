@@ -32,7 +32,8 @@ jtnews 是一个仿头条号的后台管理项目，它使用vue-cli快速搭建
 - [x] ...
 
 ## 部分截图
-<img src="wdith" width="900px" style="max-width: 100%;"/>
+<img src="https://johnnyjintao.github.io/resume/static/wxjt_20190228123850.png" width="900px" style="max-width: 100%;"/>
+<img src="https://johnnyjintao.github.io/resume/static/wxjt_20190228124011.png" width="900px" style="max-width: 100%;"/>
 
 ## 目录结构
 
@@ -74,5 +75,3 @@ npm start
 npm run build（File in the docs folder）
 ```
 
-
-Copyright (c) 2017-present，uncleLian
