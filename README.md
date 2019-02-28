@@ -20,14 +20,8 @@ jtnews 是一个仿头条号的后台管理项目，它使用vue-cli快速搭建
 > 如有问题可以直接在 Issues 中提，或者加入我们下方Vue群更进一步地交流
 
 ## 后端node.js
-Vue学习系列
-
-- 第三阶段：[vue2-health](https://github.com/uncleLian/vue2-health) —— 头条号（ pc端，难度：★★★☆☆ 过渡项目）
-
-##### 注：此系列只关注前端项目的实现，后端等知识不是此系列的范围，但会告知一二。
-
-## 项目演示
 #### [请戳这里](http://health.liansixin.win)
+
 
 ## 功能
 - [x] 全屏banner以及css3/svg动画
@@ -35,11 +29,10 @@ Vue学习系列
 - [x] 多级菜单
 - [x] 自定义图片上传、草稿等
 - [x] 管理文章（预览、编辑、撤回、删除等操作）
-- [x] 错误拦截
 - [x] ...
 
 ## 部分截图
-<img src="https://github.com/uncleLian/vue2-health/raw/master/screenshots/vue2-health.png" width="900px" style="max-width: 100%;"/>
+<img src="wdith" width="900px" style="max-width: 100%;"/>
 
 ## 目录结构
 
