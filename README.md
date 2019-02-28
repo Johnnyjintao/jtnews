@@ -20,7 +20,7 @@ jtnews 是一个仿头条号的后台管理项目，它使用vue-cli快速搭建
 > 如有问题可以直接在 Issues 中提，或者加入我们下方Vue群更进一步地交流
 
 ## 后端node.js
-#### [请戳这里](http://health.liansixin.win)
+#### [请戳这里](https://github.com/Johnnyjintao/jtnews-server)
 
 
 ## 功能
