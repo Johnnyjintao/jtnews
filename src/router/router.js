@@ -11,6 +11,7 @@ import regist from '../pages/user/regist.vue'
 
 import indexpage from '../pages/indexapge/indexpage.vue';
 import home from '../pages/home.vue';
+import filter from '../pages/filter.vue';
 
 Vue.use(Router)
 
@@ -18,46 +19,56 @@ const router =  new Router({
   routes: [
     {
       path: '/',
-      redirect: '/home',
+      component:filter
     },
     {
       path: '/home',
       name: 'home',
       component:home,
-      meta: {
-        requiresAuth: true
-      },
+      meta: {requiresAuth: true},
       children:[
         {
           path: '/home/regist',
           name: 'regist',
-          component:regist
+          component:regist,
+          meta: {requiresAuth: true},
+
         },
 
         {
           path: '/home/article',
           name: 'article',
-          component:article
+          component:article,
+          meta: {requiresAuth: true},
+
         },
         {
           path: '/home/edit',
           name: 'edit',
-          component: edit
+          component: edit,
+          meta: {requiresAuth: true},
+
         },
         {
           path: '/home/classify',
           name: 'classify',
-          component: classify
+          component: classify,
+          meta: {requiresAuth: true},
+
         },
         {
           path:'/home/indexpage',
           component:indexpage,
-          name:'indexpage'
+          name:'indexpage',
+          meta: {requiresAuth: true},
+
         },
         {
           path:'/home/aboutme',
           component:aboutme,
-          name:'aboutme'
+          name:'aboutme',
+          meta: {requiresAuth: true},
+
         }
       ]
     },
@@ -66,7 +77,6 @@ const router =  new Router({
       name: 'login',
       component:login
     },
-
   ]
 })
 
@@ -82,7 +92,6 @@ router.beforeEach((to, from, next) => {
     }else{
       next({
         path: '/login',
-        // query: { redirect: to.fullPath }  // 将刚刚要去的路由path（却无权限）作为参数，方便登录成功后直接跳转到该路由
       });
     }
 

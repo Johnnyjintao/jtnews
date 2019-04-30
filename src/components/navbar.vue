@@ -28,7 +28,7 @@
       return{
 
         user:{
-          nickname:window.sessionStorage.getItem('username'),
+          nickname:window.localStorage.getItem('username'),
           headimgurl:'http://wx.qlogo.cn/mmopen/vi_32/kAPpoX9tk40ZdeV9lyaJ9FjicsHJamL6MRsNicObcr1ejXkh00qtoG56NIiaWjLia5wdXHqDeQiaf2rcw5efCiaatPtA/132'
         }
       }
@@ -64,11 +64,11 @@
       },
 
       remove_token:()=>{
-        window.sessionStorage.removeItem('token');
+        window.localStorage.removeItem('token');
       }
     },
     mounted:function(){
-      window.sessionStorage.getItem('username')
+      window.localStorage.getItem('username')
     }
 
   }

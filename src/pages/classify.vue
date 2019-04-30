@@ -3,11 +3,12 @@
 
 
     <div class="search_line">
-      <el-input v-model="input" placeholder="请输入关键字" maxlength="10"></el-input>
+      <el-input v-model="name" placeholder="请输入关键字" maxlength="10"></el-input>
 
-      <el-button type="primary" icon="el-icon-search">搜索</el-button>
-
+      <el-button type="primary" icon="el-icon-search" @click="searchData">搜索</el-button>
+      <el-button @click="resetData" type="success">重置</el-button>
       <el-button type="primary" icon="el-icon-plus" @click="showDialog">新增分类</el-button>
+
     </div>
 
     <el-table
@@ -33,10 +34,10 @@
       <el-table-column
         fixed="right"
         label="操作"
-        width="100">
+        width="150">
         <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
-          <el-button type="text" size="small">删除</el-button>
+          <el-button @click="updateData(scope.row)" type="text" size="small">修改</el-button>
+          <el-button @click="deleteData(scope.row)" type="text" size="small">删除</el-button>
         </template>
       </el-table-column>
 
@@ -58,29 +59,16 @@
 
 <script>
   import {category} from './api/category';
+  import {Message} from 'element-ui';
   export default {
     data() {
       return {
         dialogVisible:false,
         category_name:'',
         tableData: [],
-        options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
-        value: ''
+        limit:0,
+        offset:10,
+        name:''
       }
     },
     methods:{
@@ -88,23 +76,55 @@
         this.dialogVisible = true;
         this.category_name = '';
       },
+      searchData(){
+        this.GetCategoryList();
+      },
+      resetData(){
+        this.name = '';
+        this.limit = 0;
+        this.GetCategoryList();
+      },
+
+      updateData(row){
+        this.dialogVisible = true;
+        this.category_name = row.name;
+      },
+      deleteData(row){
+        this.$confirm('确定要删除此分类？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          center: true
+        }).then(() => {
+          category.del_category({id:row.id}).then((data)=>{
+            this.GetCategoryList();
+          }).catch(()=>{
+
+          });
+        }).catch(()=>{});
+      },
       AddCategory(){
+        if(this.category_name.trim() == ''){
+          Message.error('分类名称不能为空')
+          return
+        }
         let params = {name:this.category_name}
         category.create_category(params).then(()=>{
           this.GetCategoryList();
-        }).catch(()=>{
-
+        }).catch((data)=>{
+          Message.error(data.msg)
         });
 
         this.dialogVisible = false;
       },
 
       GetCategoryList(){
-        let params = {}
+        let {limit,offset,name} = this.$data;
+        let params = {limit,offset,name}
         category.get_category_list(params).then((content)=>{
-            this.tableData = content.data.data;
-        }).catch(()=>{
-
+            this.tableData = content.data;
+        }).catch((data)=>{
+          Message.error(data.msg)
         });
       }
     },
@@ -124,6 +144,11 @@
     .el-input{
       width: 200px;
     }
-
+    .el-button{
+      margin-left: 20px;
+    }
+    .el-table{
+      margin-top: 20px;
+    }
   }
 </style>

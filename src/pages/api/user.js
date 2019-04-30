@@ -1,7 +1,8 @@
 
 import Vue from 'vue';
 import axios from './axios';
-var API_ROOT = 'http://192.168.80.199:4000/api/v1/'
+var API_ROOT = 'http://192.168.1.175:4000/api/v1/'
+
 
 export const user = {
 

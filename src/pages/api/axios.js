@@ -28,7 +28,7 @@ instance.interceptors.request.use(
 //respone拦截器
 instance.interceptors.response.use(
     response => {
-        return response;
+        return response.data;
     },
     error => { //默认除了2XX之外的都是错误的，就会走这里
         if(error.response){
@@ -41,7 +41,7 @@ instance.interceptors.response.use(
                     });
             }
         }
-        return Promise.reject(error.response);
+        return Promise.reject(error.response.data);
     }
 );
 

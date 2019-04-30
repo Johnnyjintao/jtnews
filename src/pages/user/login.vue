@@ -117,13 +117,13 @@
               const ret = await this.login(this.formInline);
               this.$data.submitloading = false;
 
-              let content = ret.data;
+              let content = ret;
               this.$store.dispatch('UserLogin', content.data.token);
 
               if(content.code == 0){
                   let userinfo = await user.getuserinfo({});
 
-                  this.$store.dispatch('USERINFO', userinfo.data);
+                  this.$store.dispatch('USERINFO', userinfo);
 
                   this.$router.replace({path:'/home/indexpage'})
                 this.$message('登录成功!');

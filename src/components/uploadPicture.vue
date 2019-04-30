@@ -5,7 +5,7 @@
 
           <el-tab-pane label="上传图片" name="upload" class="upload">
                 <el-upload ref="upload"
-                           action="http://192.168.80.199:4000/api/v1/article/upload_pic"
+                           action="http://192.168.1.175:4000/api/v1/article/upload_pic"
                            list-type="picture-card" :multiple="true"
                            :before-upload="uploadBefore"
                            :on-success="onSuccess"
@@ -122,7 +122,6 @@ export default {
         },
         // 上传完成或选择完成
         complete() {
-          debugger
             let uploadPicture = []
             let isUploadComplete = true
             if (this.activeTab === 'upload') {
@@ -139,6 +138,7 @@ export default {
             if (!isUploadComplete) {
                 this.$message.warning('部分图片没有上传成功，请重新尝试')
             }
+            debugger
             this.$emit('complete', uploadPicture)
             this.visible = false
         },

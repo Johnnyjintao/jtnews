@@ -72,14 +72,7 @@
         <div class="edit-label">类型</div>
         <div class="edit-input">
           <el-radio-group v-model="classid">
-            <el-radio-button label="2">女性</el-radio-button>
-            <el-radio-button label="3">育儿</el-radio-button>
-            <el-radio-button label="4">中医</el-radio-button>
-            <el-radio-button label="5">本地</el-radio-button>
-            <el-radio-button label="6">政策</el-radio-button>
-            <el-radio-button label="7">产业</el-radio-button>
-            <el-radio-button label="8">旅游</el-radio-button>
-            <el-radio-button label="20">其他</el-radio-button>
+            <el-radio-button :label="item.id" v-for="item of classify_list" :key="item.id">{{item.name}}</el-radio-button>
           </el-radio-group>
         </div>
       </div>
@@ -88,13 +81,13 @@
     <!-- 按钮 -->
     <div class="control">
       <!-- 修改 -->
-      <template v-if="$route.query.id && this.json && this.json.state !== '2'">
-        <el-button class='publish_btn' type='primary' size='large' @click.stop="verify('publish')">发表</el-button>
+      <template v-if="$route.query.article_id && json && json.state !== 'draft'">
+        <el-button class='publish_btn' type='primary' size='large' @click.stop="verify('article')">发表</el-button>
         <el-button class='cancle_btn gray' type='primary' size='large' @click.stop.native="$router.go(-1)">取消</el-button>
       </template>
       <!-- 新建 -->
       <template v-else>
-        <el-button class='publish_btn' type='primary' size='large' @click.stop="verify('publish')">发表</el-button>
+        <el-button class='publish_btn' type='primary' size='large' @click.stop="verify('article')">发表</el-button>
         <el-button class='draft_btn gray' type='primary' size='large' @click.stop="verify('draft')">存草稿</el-button>
         <el-button class='cancle_btn gray' type='primary' size='large' @click.stop.native="$router.go(-1)">取消</el-button>
       </template>
@@ -116,11 +109,16 @@
   import VueQuillEditor from 'vue-quill-editor'
   Vue.use(VueQuillEditor)
 
+  import {category} from './api/category';
+  import {article} from './api/article';
+  import {Message} from 'element-ui';
+
   import uploadPicture from '@/components/uploadPicture'
+  import selectPicture from '@/components/selectPicture'
 
   export default {
     name: 'publish',
-    components: { uploadPicture },
+    components: { uploadPicture,selectPicture },
     data() {
       return {
         json: null,                             // 修改的文章数据
@@ -151,16 +149,65 @@
           placeholder: ' '
         },
 
-        imageUrl:''
+        imageUrl:'',
+        classify_list:[],                      //分类列表
       }
     },
-
+    mounted(){
+      this.getCategoryList();
+      if(this.$route.query.article_id){
+        this.query_detail(this.$route.query.article_id);
+      }
+    },
     computed:{
       editor() {
         return this.$refs.myQuillEditor.quill
       }
     },
     methods:{
+      query_detail(id){
+        article.query_article_detail({id}).then((res)=>{
+          this.json = res.data;
+          this.title =  res.data.title;
+          this.author = res.data.author;
+          this.categoryId = res.data.categoryId;
+          this.coverImages = JSON.parse(res.data.banner);
+          this.cover_mode = JSON.parse(res.data.banner).length==3?3:1
+          this.content = res.data.content;
+          this.state = res.data.state;
+        }).catch((data)=>{
+          Message.error(data.msg);
+        })
+      },
+
+      getCategoryList(){
+        let params = {limit:0,offset:100000,name:''}
+        category.get_category_list(params).then((content)=>{
+          this.classify_list = content.data;
+          this.classid = content.data[0].id;
+        }).catch((data)=>{
+          Message.error(data.msg)
+        });
+      },
+
+      // 打开图片选择框
+      selectPictureOpen(index) {
+        let allImg = []
+        this.clickIndex = index
+        this.editor.container.querySelectorAll('img').forEach(item => {
+          allImg.push(item.src)
+        })
+        this.contentImages = allImg
+        this.selectPictureVisible = true
+      },
+
+      // 插入封面图
+      inserCover(val) {
+        if (val) {
+          this.coverImages[this.clickIndex] = val
+        }
+      },
+
       // 插入图片
       inserPicture(files) {
         this.editor.focus()
@@ -183,9 +230,9 @@
           this.$message.error('标题长度不能超过30个字')
         } else if (!this.content) {
           this.$message.error('正文不能为空')
-        } else if (!this.coverImages.length > 0) {
+        }/* else if (!this.coverImages.length > 0) {
           this.$message.error('封面图片不能为空')
-        } else if (this.cover_mode === 3 && this.coverImages.length < 3) {
+        }*/ else if (this.cover_mode === 3 && this.coverImages.length < 3 && this.coverImages.length > 0) {
           this.$message.error('封面图片不能少于3张')
         } else if (!this.classid) {
           this.$message.error('标签不能为空')
@@ -207,72 +254,35 @@
       },
 
 
-      verify(btnType) {
-        let type    // 类型
-        let state   // 状态码
-        // 确定编辑 or 新建
-        this.json ? type = 'edit' : type = 'new'
-        // 需要验证的类型
-        if (btnType === 'draft') {
-          state = '2'
-          if (this.onlyTitleRule()) {
-            this.publish(type, state)
-          }
+      verify(type) {
+        let flag = false;
+        if(type == 'draft'){
+          flag = this.onlyTitleRule();
+        }else{
+          flag = this.allRule();
         }
-        if (btnType === 'publish') {
-          state = '3'
-          if (this.allRule()) {
-            this.$confirm('确定发表文章？', '提示', {
-              type: 'info'
-            }).then(() => {
-              this.publish(type, state)
-            }).catch(err => {
-              console.log(err)
-            })
-          }
-        }
-      },
-      // 发表
-      publish(type, state) {
-        this.loading = true
-        this.title = this.title.replace(/\s/gi, '')
-        let params = {
-          'type': type,
-          'state': state,
-          'title': this.title,
-          'newstext': this.content,
-          'classid': this.classid
-        }
-        if (this.json) {
-          params.id = this.json.id
-        }
-        if (this.coverImages[0]) {
-          params.titlepic = this.coverImages[0]
-        }
-        if (this.cover_mode === 3) {
-          params.titlepic2 = this.coverImages[1]
-          params.titlepic3 = this.coverImages[2]
-        }
-        postArticle(params)
-          .then(res => {
-            console.log(res)
-            if (res && res.data) {
-              this.isChange = false
-              cache.removeLocal('draft')
-              this.$notify.success('操作成功')
-              this.$router.push({name: 'own'})
-            } else {
-              this.$notify.error('出现错误，请重新尝试')
-            }
-            this.loading = false
-          })
-          .catch(err => {
-            console.log(err)
-            this.loading = false
-            this.$notify.error('出现错误，请重新尝试')
-          })
-      },
+        if(!flag) return;
 
+        let article_id = this.$route.query.article_id;
+        let params = {
+          title: this.$data.title,
+          author: window.localStorage.getItem('username'),
+          categoryId: this.$data.classid,
+          banner: this.$data.coverImages,
+          content: this.$data.content|| '',
+          state:type,
+          article_id
+        }
+        article.create_article(params).then((data)=>{
+          if(article_id)
+            Message.success('修改文章成功');
+          else
+            Message.success('创建文章成功');
+            this.$router.push({path:'article'});
+        }).catch((data)=>{
+          Message.error(data.msg)
+        })
+      },
 
     }
 
@@ -592,7 +602,7 @@
             color: #fffacd;
           }
           &.is-active:after,&.is-checked:after{
-            content: '';
+            content: '已选择';
             /*content: attr(data-sort);*/
             display: block;
             position: absolute;
@@ -603,7 +613,7 @@
             transform: translate(-50%,-50%);
             -webkit-transform: translate(-50%,-50%);
             z-index: 2;
-            font-size: 30px;
+            font-size: 16px;
             color: #fffacd;
           }
         }
@@ -665,23 +675,3 @@
     }
   }
 </style>
-<!--<style>
-  #publish .undo {
-    background: url(~@/assets/icon/laststep.png)no-repeat center center;
-  }
-  #publish .undo.nothing {
-    opacity: 0.3;
-  }
-  #publish .redo {
-    background: url(~@/assets/icon/nextstep.png)no-repeat center center;
-  }
-  #publish .redo.nothing {
-    opacity: 0.3;
-  }
-  #publish .img-list .img-item label.is-active:before{
-    background-image: url(~@/assets/img/checked.png);
-  }
-  #publish .img-list .img-item label.is-checked:before{
-    background-image: url(~@/assets/img/checked.png);
-  }
-</style>-->
