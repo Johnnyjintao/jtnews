@@ -1,18 +1,20 @@
 <template>
   <header id="header" class="">
     <div class="header_wrap">
-      <router-link class="logo" to="/">头条号</router-link>
+      <span class="contitle" v-if="path!='/prolist' && projectData">{{projectData.project_name}}({{projectData.project_id}})</span>
+      <span class="contitle" v-if="path=='/prolist'">项目列表</span>
       <div class="right">
-
-        <el-dropdown class="user" @command="handleCommand" placement='bottom'>
-          <div class="userinfo">
-            <img :src="user.headimgurl" alt="">
-            <span class="el-dropdown-link">{{user.nickname}}</span>
-          </div>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="exit">退出</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+        <div class="userinfo">
+          <img src="../assets/img/head.png" alt="">
+          <span class="el-dropdown-link">{{user.user_name}}</span>
+          <span class="qx">
+              {{projectData.permission == 1?'管理员':
+                  projectData.permission == 2?'读写':
+                  projectData.permission == 3?'只读':
+                  projectData.permission == 4?'待审批':'被拒绝'}}
+            </span>
+        </div>
+        <el-button class="publish_btn" @click="handleCommand">注销</el-button>
       </div>
     </div>
   </header>
@@ -26,50 +28,35 @@
   export default {
     data(){
       return{
-
-        user:{
-          nickname:window.localStorage.getItem('username'),
-          headimgurl:'http://wx.qlogo.cn/mmopen/vi_32/kAPpoX9tk40ZdeV9lyaJ9FjicsHJamL6MRsNicObcr1ejXkh00qtoG56NIiaWjLia5wdXHqDeQiaf2rcw5efCiaatPtA/132'
-        }
+        user:this.$global.user,
+        path:this.$route.path,
       }
     },
 
-    props:['curPage'],
-    computed: {
-//      ...mapState([
-//        'user'
-//      ]),
+    props:['projectData'],
+
+    mounted:function(){
 
     },
     methods: {
-//      ...mapMutations([
-//        'set_user',
-//        'remove_token'
-//      ]),
-      handleCommand(command) {
 
-        if (command === 'exit') {
+      handleCommand() {
           this.$confirm('此操作将退出登录, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning',
             center: true
           }).then(() => {
-            this.remove_token()
-            this.$router.push('/login')
+            localStorage.removeItem('token');
+            this.$global.user.islogin = false;
+            this.$router.replace('/login');
           }).catch(() => {
           });
 
-        }
-      },
-
-      remove_token:()=>{
-        window.localStorage.removeItem('token');
       }
-    },
-    mounted:function(){
-      window.localStorage.getItem('username')
+
     }
+
 
   }
 
@@ -80,16 +67,21 @@
   #header {
     position: relative;
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, .12);
-
-    height: 76px;
+    height: 70px;
+    padding: 0 50px;
     background: #fff;
-    min-width: 1138px;
+    z-index: 1;
     .header_wrap {
       position: relative;
-      margin: 0 auto;
-      width: 1138px;
       height: 100%;
       z-index: 100;
+      text-align: center;
+
+      .contitle{
+        height: 100%;
+        line-height: 70px;
+        font-size: 20px;
+      }
       .logo {
         position: absolute;
         top: 50%;
@@ -108,10 +100,19 @@
         float: right;
         display: flex;
         align-items: center;
-        .publish_btn {}
-        .user {
+        .publish_btn {
+          float: right;
+        }
           margin-left: 40px;
           .userinfo {
+            margin-right: 20px;
+            .qx{
+              background: #4aafe9;
+              color: #ffffff;
+              padding: 5px;
+              border-radius: 3px;
+              margin-left: 20px;
+            }
             img {
               width: 40px;
               height: 40px;
@@ -121,7 +122,6 @@
             }
           }
         }
-      }
     }
   }
 

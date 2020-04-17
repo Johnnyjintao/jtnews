@@ -4,37 +4,47 @@
     <el-menu
       :default-active='$route.name'
       class="el-menu-vertical-demo"
+      background-color="#3f4d67"
+      text-color="#ffffff"
+      :router="true"
       @select="handleSelect"
       @open="handleOpen"
       @close="handleClose">
 
-      <el-menu-item index="home/indexpage">
-        <i class="el-icon-menu"></i>
-        <span slot="title">主页</span>
+      <div class="logo" >
+        <span>yumdoc</span>
+      </div>
+
+      <!--<div class="logo logo2"  v-if="!inproject" @click="routego('prolist')">-->
+        <!--<div class="left">-->
+          <!--<img src="../assets/img/back.png" />-->
+        <!--</div>-->
+        <!--<span>返回项目列表</span>-->
+      <!--</div>-->
+
+
+      <el-menu-item index="prolist"  v-if="inproject">
+        <i class="el-icon-reading"></i>
+        <span slot="title">项目列表</span>
       </el-menu-item>
 
-      <el-menu-item index="home/edit">
-        <i class="el-icon-edit-outline"></i>
-        <span slot="title">发布</span>
-      </el-menu-item>
+      <div v-if="!inproject">
+        <el-menu-item  index="overview">
+          <i class="el-icon-reading"></i>
+          <span slot="title">项目概览</span>
+        </el-menu-item>
+
+        <el-menu-item index="apidoc">
+          <i class="el-icon-tickets"></i>
+          <span slot="title">api文档</span>
+        </el-menu-item>
 
 
-      <el-submenu index="3">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>管理</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="home/article">文章管理</el-menu-item>
-          <el-menu-item index="home/classify">分类管理</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-
-      <el-menu-item index="home/aboutme">
-        <i class="el-icon-setting"></i>
-        <span slot="title">关于我</span>
-      </el-menu-item>
-
+        <el-menu-item index="person">
+          <i class="el-icon-user"></i>
+          <span slot="title">人员管理</span>
+        </el-menu-item>
+      </div>
 
     </el-menu>
   </div>
@@ -48,12 +58,23 @@
     data(){
       return{
         curkey:'/',
-        childPage:0
+        childPage:0,
+        inproject:true,
+        path:this.$route.path
       }
     },
 
     props:['curPage'],
+    mounted(){
+      if(this.path=='/prolist'){
+        this.inproject = true
+      }else{
+        this.inproject = false
+      }
+    },
     methods:{
+
+
       handleOpen(key, keyPath) {
         console.log(key, keyPath);
       },
@@ -62,7 +83,7 @@
       },
 
       handleSelect(key, keyPath) {
-        this.$router.push({path:'/'+key})
+        // this.$router.push({path:'/'+key})
         console.log(key, keyPath);
       }
     }
@@ -75,13 +96,60 @@
 <style scoped lang="less">
 
 .el-menu-par{
-  width:180px;
-  float: left;
+  width: 235px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 100%;
+  z-index: 1;
+  background: #3f4d67;
+  .logo{
+    height: 72px;
+    line-height: 72px;
+    font-size: 22px;
+    color: #ffffff;
+    text-align: center;
+    font-weight: 700;
+    &.logo2{
+      font-size: 15px;
+      padding-left: 0px;
+      cursor: pointer;
+      text-align: left;
+      font-weight: 100;
+      .left{
+        width: 72px;
+        height: 72px;
+        text-align: center;
+      }
+
+      &:hover{
+        background: #323e52;
+      }
+      &:active{
+        opacity: 0.8;
+      }
+    }
+    img{
+      width: 25px;
+      height: 25px;
+      vertical-align: middle;
+    }
+    span{
+      vertical-align: middle;
+    }
+  }
+  .el-menu{
+    border-right: none;
+  }
   .el-menu-item{
     min-width: 100%;
+    i{
+      color: #ffffff;
+    }
     &.is-active {
-      color: #409EFF;
-      background-color: #ecf5ff;
+      color: #ffffff;
+      background-color: #323e52 !important;
     }
   }
 }

@@ -11,12 +11,16 @@ Vue.config.productionTip = false
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import store from './store';
-
+import global from './global';
 Vue.use(ElementUI);
 Vue.use(Vuex);
-
-
 Vue.use(VueResource);
+
+Vue.prototype.$global = global;
+
+
+
+
 
 /* eslint-disable no-new */
 new Vue({

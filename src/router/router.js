@@ -2,74 +2,76 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store'
 
-import article from '../pages/article.vue'
-import edit from '../pages/edit.vue'
-import classify from '../pages/classify.vue'
-import aboutme from '../pages/aboutme.vue'
 import login from '../pages/user/login.vue'
-import regist from '../pages/user/regist.vue'
+import prospace from '../pages/user/prospace.vue'
 
-import indexpage from '../pages/indexapge/indexpage.vue';
+
 import home from '../pages/home.vue';
-import filter from '../pages/filter.vue';
+import prolist from '../pages/project/prolist.vue';
+import overview from '../pages/project/overview.vue';
+import apidoc from '../pages/project/apidoc.vue';
+import apidocedit from '../pages/project/apidocedit.vue';
+import apidocpreview from '../pages/project/apidocpreview.vue';
+
+import prodoc from '../pages/project/prodoc.vue';
+import profile from '../pages/project/profile.vue';
+import person from '../pages/project/person.vue';
+import global from '../global'
 
 Vue.use(Router)
 
 const router =  new Router({
   routes: [
+
+
     {
-      path: '/',
-      component:filter
-    },
-    {
-      path: '/home',
-      name: 'home',
-      component:home,
+      path: '/prolist',
+      name: 'prolist',
+      component:prolist,
       meta: {requiresAuth: true},
       children:[
         {
-          path: '/home/regist',
-          name: 'regist',
-          component:regist,
+          path: '/prolist/:id/overview',
+          name: 'overview',
+          component:overview,
           meta: {requiresAuth: true},
-
-        },
-
-        {
-          path: '/home/article',
-          name: 'article',
-          component:article,
-          meta: {requiresAuth: true},
-
         },
         {
-          path: '/home/edit',
-          name: 'edit',
-          component: edit,
+          path: '/prolist/:id/apidoc',
+          name: 'apidoc',
+          component:apidoc,
           meta: {requiresAuth: true},
-
         },
         {
-          path: '/home/classify',
-          name: 'classify',
-          component: classify,
+          path: '/prolist/:id/apidocedit',
+          name: 'apidocedit',
+          component:apidocedit,
           meta: {requiresAuth: true},
-
         },
         {
-          path:'/home/indexpage',
-          component:indexpage,
-          name:'indexpage',
+          path: '/prolist/:id/apidocpreview',
+          name: 'apidocpreview',
+          component:apidocpreview,
           meta: {requiresAuth: true},
-
         },
         {
-          path:'/home/aboutme',
-          component:aboutme,
-          name:'aboutme',
+          path: '/prolist/:id/prodoc',
+          name: 'prodoc',
+          component:prodoc,
           meta: {requiresAuth: true},
-
-        }
+        },
+        {
+          path: '/prolist/:id/profile',
+          name: 'profile',
+          component:profile,
+          meta: {requiresAuth: true},
+        },
+        {
+          path: '/prolist/:id/person',
+          name: 'person',
+          component:person,
+          meta: {requiresAuth: true},
+        },
       ]
     },
     {
@@ -77,18 +79,28 @@ const router =  new Router({
       name: 'login',
       component:login
     },
+    {
+      path: '/',
+      component:login
+    },
+    {
+      path: '/prospace',
+      name: 'prospace',
+      component:prospace
+    },
+
   ]
 })
 
 //注册全局钩子用来拦截导航
 router.beforeEach((to, from, next) => {
   //获取store里面的token
-  let token = store.state.token;
+  let token = localStorage.getItem('token');
   //判断要去的路由有没有requiresAuth
   if(to.meta.requiresAuth){
 
     if(token){
-      next();
+        next();
     }else{
       next({
         path: '/login',
@@ -98,6 +110,7 @@ router.beforeEach((to, from, next) => {
   }else{
     next();//如果无需token,那么随它去吧
   }
+
 });
 
 export default router;

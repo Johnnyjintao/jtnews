@@ -1,38 +1,43 @@
 <template>
 
-  <div id="app" :style="{overflow:isoverflow}">
-    <router-view ></router-view>
+  <div id="app">
+    <div v-if="islogin">
+      <router-view ></router-view>
+    </div>
+
   </div>
 </template>
 
 
 <script>
+  import {http} from "./api/http";
 
   export default {
     name: 'App',
     data:function(){
       return{
-        isoverflow:''
+        isoverflow:'',
+        islogin:false
       }
     },
-    computed: {
 
-    },
-
-
-    watch:{
-      $route(to,from){
-        console.log('ttt',to.path);
-        if(to.path.indexOf('home')!='-1'){
-          this.$data.isoverflow = 'scroll';
-        }else{
-          this.$data.isoverflow = 'hidden';
-        }
-      }
+    mounted(){
+      this.getuserinfo();
     },
 
     methods:{
-
+      getuserinfo(){
+        http.getuserinfo().then((res)=>{
+          this.islogin = true;
+          if(res.code == 0){
+            this.$global.user = res.data;
+            this.$global.islogin = true;
+          }
+        }).catch(()=>{
+          this.islogin = true;
+          this.$global.islogin = true;
+        })
+      }
     }
   }
 
@@ -43,7 +48,6 @@
     position: relative;
     width: 100%;
     height:100%;
-    background: #f4f5f6;
 
   }
 </style>

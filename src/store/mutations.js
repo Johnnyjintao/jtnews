@@ -10,8 +10,10 @@ import * as types from './types.js'
 const mutations = {
     [types.LOGIN]: (state, data) => {
         //更改token的值
-        state.token = data;
-        window.localStorage.setItem('token', data);
+        state.token = data.token;
+        state.user = data.user;
+        window.localStorage.setItem('token', data.token);
+        window.localStorage.setItem('user', data.user);
     },
     [types.LOGOUT]: (state) => {
         //登出的时候要清除token
