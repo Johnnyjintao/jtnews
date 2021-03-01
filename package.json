@@ -15,7 +15,7 @@
     "less": "^3.8.1",
     "less-loader": "^4.1.0",
     "mockjs": "^1.0.1-beta3",
-    "prismjs": "^1.17.1",
+    "prismjs": "^1.23.0",
     "vue": "^2.5.2",
     "vue-prism-editor": "^0.3.0",
     "vue-resource": "^1.5.1",
